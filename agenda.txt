@@ -1,0 +1,12 @@
+Build a data pipeline based on messaging using Spark and Hive
+==============================================================
+-	Designing a data pipeline based on messaging
+-	Load data from a remote URL
+-	Spark transformation
+-	Launching a Spark application from your application
+-	Explore hive as a backend for structured data access
+-	Discuss pipeline automation with Oozie or Airflow as another option
+
+
+The data pipeline
+=====================
