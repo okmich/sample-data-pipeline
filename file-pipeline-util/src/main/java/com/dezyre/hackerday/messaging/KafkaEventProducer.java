@@ -6,8 +6,14 @@
 package com.dezyre.hackerday.messaging;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 /**
  *
@@ -15,11 +21,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
  */
 public class KafkaEventProducer {
 
-	private final String topic;
 	private final KafkaProducer<String, String> kafkaProducer;
 
-	public KafkaEventProducer(String kafkaBrokerUrl, String topic) {
-		this.topic = topic;
+	public KafkaEventProducer(String kafkaBrokerUrl) {
 		Properties properties = new Properties();
 		properties.put("bootstrap.servers", kafkaBrokerUrl);
 		properties.put("acks", "all");
@@ -36,6 +40,21 @@ public class KafkaEventProducer {
 	}
 
 	public void send(Event event) {
-		kafkaProducer.send(new ProducerRecord(this.topic, event.toString()));
+		Future<RecordMetadata> responseFuture = kafkaProducer
+				.send(new ProducerRecord<String, String>(event.getCode(), event
+						.getFileName(), event.toString()));
+		// force delivery
+		try {
+			responseFuture.get(3, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
+
+//	public static void main(String[] args) {
+//		new KafkaEventProducer("quickstart.cloudera:9092").send(new Event(
+//				"file-ingestion-error", "2015-01-01-15",
+//				"Error occured trying to upload the fileKey the hdfs"));
+//	}
+
 }

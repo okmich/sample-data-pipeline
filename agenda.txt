@@ -7,6 +7,45 @@ Build a data pipeline based on messaging using Spark and Hive
 -	Explore hive as a backend for structured data access
 -	Discuss pipeline automation with Oozie or Airflow as another option
 
-
 The data pipeline
 =====================
+	- download file from remote server
+	- extract file
+	- upload file to hdfs
+			send a message
+	- spark application run
+			sends a message
+	- ..
+
+
+
+Kafka topic creation
+===========================================
+kafka-topics.sh --create --topic file-ingestion-complete --replication-factor 1 --partitions 1 --zookeeper quickstart.cloudera:2181
+
+kafka-topics.sh --create --topic file-ingestion-error --replication-factor 1 --partitions 1 --zookeeper quickstart.cloudera:2181
+
+kafka-topics.sh --create --topic transformation-complete --replication-factor 1 --partitions 1 --zookeeper quickstart.cloudera:2181
+
+kafka-topics.sh --create --topic transformation-error --replication-factor 1 --partitions 1 --zookeeper quickstart.cloudera:2181
+
+
+Run console kafka consumer
+=================================
+kafka-console-consumer.sh --topic file-ingestion-complete --bootstrap-server quickstart.cloudera:9092 --from-beginning
+
+kafka-console-consumer.sh --topic file-ingestion-error --bootstrap-server quickstart.cloudera:9092 --from-beginning
+
+Run console kafka producer for testing the scala code
+=================================
+kafka-console-producer.sh --topic file-ingestion-complete --broker-list quickstart.cloudera:9092
+
+Run the GithubPipelineRunner
+========================
+java -cp ./target/data-pipeline-util-1.0-SNAPSHOT.jar com.dezyre.hackerday.GithubPipelineRunner  -hdfsloc=hdfs://quickstart.cloudera:8020/user/cloudera/githubarchives -kafkaBroker=quickstart.cloudera:9092 -fileKey=2015-01-01-15
+
+Run the Transformation 
+=============================
+# export the /usr/lib/spark as an enviromental variable
+export SPARK_HOME=/usr/lib/spark
+java -jar target/scala-2.10/github-archive-transformer-assembly-1.0.jar

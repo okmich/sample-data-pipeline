@@ -27,14 +27,23 @@ public class FileUploadUtil {
 	 * @param hdfsPath
 	 */
 	public FileUploadUtil(String fileKey, String localFile, String hdfsPath) {
-		this.localPath = new Path("file://" + localFile);
+		// this.localPath = new Path("file://" + localFile); -- wrong
+		this.localPath = new Path(localFile);
 		this.hdfsPath = new Path(hdfsPath + "/" + fileKey);
 	}
 
 	public boolean upload() throws Exception {
 		Configuration conf = new Configuration();
+		conf.addResource("/etc/hadoop/conf/core-site.xml");
+		conf.addResource("/etc/hadoop/conf/hdfs-site.xml");
+
+		conf.set("fs.hdfs.impl",
+				org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+		conf.set("fs.file.impl",
+				org.apache.hadoop.fs.LocalFileSystem.class.getName());
 
 		try (FileSystem hdfsFs = FileSystem.get(hdfsPath.toUri(), conf);) {
+			System.out.println(hdfsFs.getClass());
 			if (!hdfsFs.exists(hdfsPath)) {
 				hdfsFs.mkdirs(hdfsPath);
 			}
@@ -43,8 +52,8 @@ public class FileUploadUtil {
 		} catch (Exception ex) {
 			Logger.getLogger(FileUploadUtil.class.getName()).log(Level.SEVERE,
 					null, ex);
+			throw ex;
 		}
-		return false;
 	}
 
 	public String getHdfsLocation() {
@@ -52,9 +61,9 @@ public class FileUploadUtil {
 	}
 
 	// public static void main(String[] args) throws Exception {
-	// new FileUploadUtil(
-	// "file:///home/cloudera/2015-01-01-16.json",
-	// "hdfs://quickstart.cloudera:8020/user/cloudera/githubarchives/2015-01-01-16.json")
+	// new FileUploadUtil("2015-01-01-16",
+	// "/home/cloudera/2015-01-01-15.json",
+	// "hdfs://quickstart.cloudera:8020/user/cloudera/githubarchives")
 	// .upload();
 	// System.out.println("Done");
 	// }

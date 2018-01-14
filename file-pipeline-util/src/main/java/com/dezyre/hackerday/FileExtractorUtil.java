@@ -56,8 +56,8 @@ public class FileExtractorUtil {
         return extractedFile;
     }
 
-    public static void main(String[] args) {
-        new FileExtractorUtil("/home/cloudera/Downloads/2015-01-01-15.json.gz").extract();
-    }
+    // public static void main(String[] args) {
+    //     new FileExtractorUtil("/home/cloudera/Downloads/2015-01-01-15.json.gz").extract();
+    // }
 
 }

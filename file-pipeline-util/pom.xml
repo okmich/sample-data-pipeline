@@ -28,7 +28,7 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka -->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka_2.12</artifactId>
+			<artifactId>kafka_2.11</artifactId>
 			<version>0.11.0.2</version>
 		</dependency>
 
