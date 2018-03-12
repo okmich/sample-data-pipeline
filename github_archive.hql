@@ -1,4 +1,4 @@
-create scheam github_archive;
+create schema github_archive;
 
 CREATE TABLE create_evt (   
 	id string,
